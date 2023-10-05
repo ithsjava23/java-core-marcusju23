@@ -1,6 +1,5 @@
 package org.example.warehouse;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,21 +78,14 @@ public class Warehouse {
     }
 
     public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
-        Map<Category, List<ProductRecord>> groupedProducts = new HashMap<>();
-        for (ProductRecord product : products.values()) {
-            groupedProducts.computeIfAbsent(product.category(), k -> new ArrayList<>()).add(product);
-        }
-        return Collections.unmodifiableMap(groupedProducts);
+        return products.values().stream()
+                .collect(Collectors.groupingBy(ProductRecord::category));
     }
 
     public List<ProductRecord> getProductsBy(Category category) {
-        List<ProductRecord> productsByCategory = new ArrayList<>();
-        for (ProductRecord product : products.values()) {
-            if (product.category().equals(category)) {
-                productsByCategory.add(product);
-            }
-        }
-        return Collections.unmodifiableList(productsByCategory);
+        return products.values().stream()
+                .filter(product -> product.category().equals(category))
+                .collect(Collectors.toList());
     }
 
     private void validateInput(String name, Category category) {
